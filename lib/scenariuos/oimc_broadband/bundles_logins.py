@@ -104,7 +104,7 @@ type_part = {
 
 def optional(type_,exclude_):
     result = ""
-    if exclude_ != '[]' or exclude_ != '':result += f""" and not {type_}_client_address << any (array{exclude_}::inet[])"""
+    if exclude_ != '[]' or exclude_ != '':result += f""" and not {type_}_client_address <<= any (array{exclude_}::inet[])"""
     return result
 
 def info():
