@@ -53,7 +53,7 @@ def combining_bundles_reports(operators_,matrix_nat_,matrix_aaa_,matrix_logins_)
 
     for telco in telco_codes:
         logging.info(f"""Statistics: {telco[2]}, telco: {telco[1]}""")
-        logging.info("{:<40} {:<9} {:<11} {:<9} {:<11} {:<9} {:<11}".format('Type','NAT', 'NAT count','AAA','AAA count','Logins','Logins count'))
+        logging.info("{:<40} {:<10} {:<15} {:<10} {:<15} {:<10} {:<15}".format('Type','NAT', 'NAT count','AAA','AAA count','Logins','Logins count'))
         nat=nat_count=aaa=aaa_count=logins=logins_count=0
         for type_p in type_part:
             if matrix_nat_np.size > 0:
@@ -79,7 +79,7 @@ def combining_bundles_reports(operators_,matrix_nat_,matrix_aaa_,matrix_logins_)
                 else: logins=logins_count= 0
 
 
-            logging.info("{:<40} {:<7} {:<9} {:<7} {:<9} {:<7} {:<9}".format(type_part[type_p],nat,nat_count,aaa,aaa_count,logins,logins_count))
+            logging.info("{:<40} {:<10} {:<15} {:<10} {:<15} {:<10} {:<15}".format(type_part[type_p],nat,nat_count,aaa,aaa_count,logins,logins_count))
         logging.info("="*80)
 
 
