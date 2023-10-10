@@ -113,8 +113,8 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
     telco_codes_ = np.array(telco_codes_)
     results_matrix = []
     if range_ % 24 == 0:
-        date_l = (datetime.today() - timedelta(days=range_ // 24 + 1)).strftime("%Y-%m-%d 00:00:00")
-        date_h = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d 00:00:00")
+        date_l = (datetime.today() - timedelta(days=range_ // 24)).strftime("%Y-%m-%d 00:00:00")
+        date_h = (datetime.today()).strftime("%Y-%m-%d 00:00:00")
     else:
         date_l = (datetime.today() - timedelta(hours=range_)).strftime("%Y-%m-%d %H:%M:%S")
         date_h = (datetime.today()).strftime("%Y-%m-%d %H:%M:%S")
