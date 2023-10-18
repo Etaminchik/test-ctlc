@@ -25,7 +25,6 @@ def run(config_):
     db_port         = config_['database']['port']
     db_user         = config_['database']['user']
     db_password     = config_['database']['password']
-    db_schema       = config_['database']['schema']
     db_name         = config_['database']['database']
 
     nat_check       = config_['scenarious']['nat_check']
