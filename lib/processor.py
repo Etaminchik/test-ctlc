@@ -19,7 +19,7 @@ def run(config_):
     if not os.path.isdir(log_path):os.mkdir(log_path)
     tmp_files_path  = config_['main']['tmp_files_path']
     if not os.path.isdir(tmp_files_path):os.mkdir(tmp_files_path)
-    ingener_mode    = config_['main']['ingener_mode']
+#    ingener_mode    = config_['main']['ingener_mode']
 
     db_host         = config_['database']['host']
     db_port         = config_['database']['port']
