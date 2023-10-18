@@ -160,7 +160,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
                 results = __result
                 logging.debug(f"""RESULT: {__result}""")
                 if __result[0] not in logins_for_file:
-                    logins_for_file.append(result[0])
+                    logins_for_file.append(__result[0])
 
         logging.info(text_for_log)
 
