@@ -160,7 +160,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,e
         for result in results:
             
             procent = 100 - result[2] / result[1] * 100
-            results_matrix.append([result[0], type_part[part[1]], procent, part[2],part[3],result[1]])
+            results_matrix.append([str(result[0]), type_part[part[1]], procent, part[2],part[3],result[1]])
             text_for_log += """{:<10} | """.format(f"""{result[0]}:{procent:.3f}""")
 
             if procent < threshold_[0]:
