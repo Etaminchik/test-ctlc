@@ -465,7 +465,6 @@ def check_billing():
     _e.psi(operators[num], "="*70)
     print('> BILLING CHECKED')
     print("="*70)
-    print('> CHECK NAT')
   
 
 check_billing()
