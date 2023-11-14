@@ -12,9 +12,9 @@ select ${type_}_telco_code,
 count(*),
 count(case when ${type_}_nat_address is null ${optional} then 1 else null end)
 from ${partition}
-where ${type_}_client_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address << any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}))
-and not ${type_}_server_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+where ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}))
+and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
 and ${type_}_telco_code in (${telco_codes})
 group by ${type_}_telco_code 
 order by ${type_}_telco_code""")
@@ -25,9 +25,9 @@ select ${type_}_telco_code,
 count(*),
 count(case when ${type_}_nat_address is null ${optional} then 1 else null end)
 from ${partition}
-where ${type_}_client_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address << any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}))
-and not ${type_}_server_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+where ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}))
+and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
 and ${type_}_telco_code in (${telco_codes})
 group by ${type_}_telco_code 
 order by ${type_}_telco_code""")
@@ -36,14 +36,14 @@ template_nat_analysis_wo_ipnum= Template("""
 select * from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco_codes})
-and ${type_}_client_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional};
+and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional};
 
 select ${type_}_client_address, count(1) from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco_codes})
-and ${type_}_client_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional}
+and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional}
 group by ${type_}_client_address 
 order by count(1) desc;""")
 
@@ -51,16 +51,16 @@ template_nat_analysis_w_ipnum= Template("""
 select * from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco})
-and ${type_}_client_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address << any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco}))
-and not ${type_}_server_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional};
+and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco}))
+and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional};
 
 select ${type_}_client_address, count(1) from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco})
-and ${type_}_client_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address << any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco}))
-and not ${type_}_server_address << any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional}
+and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco}))
+and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional}
 group by ${type_}_client_address 
 order by count(1) desc;""")
 
