@@ -1,6 +1,8 @@
 #0 - id, 1-login
 export_type = 0
 
+REPORT_PATH = './reports'
+
 from classes import Dictionary
 from classes import Abonents
 from classes import Export
@@ -19,8 +21,8 @@ date_h = (datetime.today() - timedelta(days=1)).strftime("%Y-%m-%d 01:00:00")
 #date_h = "2023-08-11 01:00:00"
 
 telcos = []
-if not os.path.isdir('reports'):
-    os.mkdir('reports')   
+if not os.path.isdir(REPORT_PATH):
+    os.mkdir(REPORT_PATH)   
 path_date = datetime.today().strftime("%d.%m.%Y_%H%M%S")
 con = psycopg2.connect(
   database='vasexperts', 
@@ -40,11 +42,11 @@ operators = _dict.operators()
 
 for i in range(len(operators)):
   oper_path = operators[i][2].replace('"', '')
-  if not os.path.isdir('reports/' + oper_path.replace(' ', '_')):
-    os.mkdir('reports/' + oper_path.replace(' ', '_'))
+  if not os.path.isdir(REPORT_PATH +'/'+ oper_path.replace(' ', '_')):
+    os.mkdir(REPORT_PATH +'/' + oper_path.replace(' ', '_'))
   if not os.path.isdir('reports/' + oper_path.replace(' ', '_') + '/' + path_date):
-    os.mkdir('reports/' + oper_path.replace(' ', '_') + '/' + path_date)
-  operators[i] = operators[i] + ((str('reports/' + oper_path + '/' + path_date + '/')),)
+    os.mkdir(REPORT_PATH +'/' + oper_path.replace(' ', '_') + '/' + path_date)
+  operators[i] = operators[i] + ((str(REPORT_PATH +'/' + oper_path + '/' + path_date + '/')),)
 
 
 def check_billing():
