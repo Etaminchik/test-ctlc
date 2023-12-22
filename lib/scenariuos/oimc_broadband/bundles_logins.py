@@ -117,7 +117,8 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
         date_h = (datetime.today()).strftime("%Y-%m-%d 00:00:00")
     else:
         date_l = (datetime.today() - timedelta(hours=range_)).strftime("%Y-%m-%d %H:%M:%S")
-        date_h = (datetime.today()).strftime("%Y-%m-%d %H:%M:%S")
+        date_h = (datetime.today() + timedelta(days=1)).strftime("%Y-%m-%d 00:00:00")
+
 
     if native_partitions_:template_partitions = template_partitions_new
     else:template_partitions = template_partitions_old
