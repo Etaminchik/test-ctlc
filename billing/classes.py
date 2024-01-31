@@ -215,7 +215,7 @@ class Abonents():
             join oims.subs_person_history sph 
             on sph.sprh_subs_id = s.subs_id 
             where (sprh_document_serial_number = '0000'
-            or sprh_document_serial_number = '000000'
+            or sprh_document_number = '000000'
             or sprh_document_issuer = 'Данные не предоставлены оператором'
             or sprh_document_issue_date = '2000-01-01')
             and sph.sprh_doct_id = 1
@@ -231,7 +231,7 @@ class Abonents():
             join oims.subs_person_history sph 
             on sph.sprh_subs_id = s.subs_id 
             where (sprh_document_serial_number = '0000'
-            or sprh_document_serial_number = '000000'
+            or sprh_document_number = '000000'
             or sprh_document_issuer = 'Данные не предоставлены оператором'
             or sprh_document_issue_date = '2000-01-01')
             and s.subs_id not in {self.end_users}
