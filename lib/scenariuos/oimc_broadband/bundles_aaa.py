@@ -70,12 +70,13 @@ type_part = {
 
 def optional(type_,exclude_):
     result = ""
-    if exclude_ != '[]' or exclude_ != '':result += f""" and not {type_}_client_address <<= any (array{exclude_}::inet[])"""
+    if exclude_[0] != '[]' or exclude_[0] != '':result += f""" and not {type_}_client_address <<= any (array{exclude_[0]}::inet[])"""
+    if exclude_[1] != '[]' or exclude_[1] != '':result += f""" and not {type_}_server_address <<= any (array{exclude_[1]}::inet[])"""
     return result
 
 def info():
     ...
-def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,threshold_,tmp_files_path_):
+def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,exclude_server_address_,threshold_,tmp_files_path_):
     telco_codes_ = np.array(telco_codes_)
     results_matrix = []
     if range_ % 24 == 0:
@@ -101,7 +102,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,thre
         __select = template_aaa.substitute(partition=part[0], 
                                            type_=type_part[part[1]], 
                                            telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','),
-                                           optional=optional(type_part[part[1]],exclude_client_address_))
+                                           optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
         
         logging.debug(f"""SELECT: {__select}""")
         cur_.execute(__select)
@@ -115,7 +116,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,thre
             text_for_log += """{:<10} | """.format(f"""{result[0]}:{procent:.3f}""")
 
             if procent < threshold_[0]:
-                __select = template_aaa_clients.substitute(type_=type_part[part[1]], partition=part[0], telco=result[0], having_count=result[2]*threshold_[1]/100, optional=optional(type_part[part[1]],exclude_client_address_))
+                __select = template_aaa_clients.substitute(type_=type_part[part[1]], partition=part[0], telco=result[0], having_count=result[2]*threshold_[1]/100, optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
                 logging.debug(f"""SELECT: {__select}""")
                 cur_.execute(__select)
                 __result = cur_.fetchall()
