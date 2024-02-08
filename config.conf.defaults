@@ -36,6 +36,7 @@ nat_threshold_for_error_sampling_as_percentage = 1
 [AAA]
 aaa_range_hours = 24
 aaa_exclude_client_address = []
+aaa_exclude_server_address = []
 aaa_threshold_for_analysis_as_percentage = 95
 aaa_threshold_for_error_sampling_as_percentage = 1
 
