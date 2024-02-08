@@ -40,6 +40,7 @@ def run(config_):
 
     aaa_range_hours                                 = int(config_['AAA']['aaa_range_hours'])
     aaa_exclude_client_address                      = ast.literal_eval(config_['AAA']['aaa_exclude_client_address'])
+    aaa_exclude_server_address                      = ast.literal_eval(config_['AAA']['aaa_exclude_server_address'])
     aaa_threshold_for_analysis_as_percentage        = int(config_['AAA']['aaa_threshold_for_analysis_as_percentage'])
     aaa_threshold_for_error_sampling_as_percentage  = int(config_['AAA']['aaa_threshold_for_error_sampling_as_percentage'])
 
@@ -134,6 +135,7 @@ def run(config_):
                         native_partitions,
                         aaa_range_hours,
                         aaa_exclude_client_address,
+                        aaa_exclude_server_address,
                         [aaa_threshold_for_analysis_as_percentage,aaa_threshold_for_error_sampling_as_percentage],
                         tmp_files_path)
 
