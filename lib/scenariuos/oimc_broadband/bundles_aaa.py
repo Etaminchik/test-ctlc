@@ -116,7 +116,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,excl
             text_for_log += """{:<10} | """.format(f"""{result[0]}:{procent:.3f}""")
 
             if procent < threshold_[0]:
-                __select = template_aaa_clients.substitute(type_=type_part[part[1]], partition=part[0], telco=result[0], having_count=result[2]*threshold_[1]/100, optional=optional(type_part[part[1]],exclude_client_address_))
+                __select = template_aaa_clients.substitute(type_=type_part[part[1]], partition=part[0], telco=result[0], having_count=result[2]*threshold_[1]/100, optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
                 logging.debug(f"""SELECT: {__select}""")
                 cur_.execute(__select)
                 __result = cur_.fetchall()
