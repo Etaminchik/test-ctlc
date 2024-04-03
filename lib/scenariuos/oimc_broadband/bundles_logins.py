@@ -75,7 +75,7 @@ or parent = 'oimc.im_connections'::regclass
 or parent = 'oimc.ftp_connections'::regclass
 or parent = 'oimc.terminal_connections'::regclass)
 and range_min >= '${date_l}'                        
---and range_max <= '${date_h}' 
+and range_max <= '${date_h}' 
 """)
 
 template_partitions_new = Template("""
@@ -89,7 +89,7 @@ or rngp_base_table = 'oimc.im_connections'::regclass
 or rngp_base_table = 'oimc.ftp_connections'::regclass    
 or rngp_base_table = 'oimc.terminal_connections'::regclass)                    
 and rngp_from_value >= '${date_l}'                     
---and rngp_to_value <= '${date_h}' 
+and rngp_to_value <= '${date_h}' 
 """)
 
 type_part = {
