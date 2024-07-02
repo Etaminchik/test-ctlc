@@ -181,7 +181,9 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,e
 
 
     results_matrix_np = np.array(results_matrix)
-
+    if len(results_matrix_np) == 0:
+        logging.error("[NAT] ДАННЫХ ЗА ПЕРИОД НЕТ")
+        return []
             
     for telco in (np.unique(results_matrix_np[:,0])):
         logging.info("="*30 +f": NAT statistics [telco:{telco}]:"+"="*30)
