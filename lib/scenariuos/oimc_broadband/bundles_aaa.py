@@ -133,7 +133,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,excl
 
     results_matrix_np = np.array(results_matrix)
     if len(results_matrix_np) == 0:
-        logging.error("[NAT] ДАННЫХ ЗА ПЕРИОД НЕТ")
+        logging.error("[AAA] ДАННЫХ ЗА ПЕРИОД НЕТ")
         return []
             
     for telco in (np.unique(results_matrix_np[:,0])):
