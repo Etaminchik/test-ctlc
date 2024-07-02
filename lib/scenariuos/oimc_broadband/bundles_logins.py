@@ -173,7 +173,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
 
     results_matrix_np = np.array(results_matrix)
     if len(results_matrix_np) == 0:
-        logging.error("[NAT] ДАННЫХ ЗА ПЕРИОД НЕТ")
+        logging.error("[LGN] ДАННЫХ ЗА ПЕРИОД НЕТ")
         return []
             
     for telco in (np.unique(results_matrix_np[:,0])):
