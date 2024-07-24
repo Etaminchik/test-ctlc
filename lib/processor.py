@@ -66,7 +66,7 @@ def run(config_):
     if aaa_check == 'True':
         scenarios.append('check_aaa')
         logging.info(f"""[AAA] A check of the AAA bundle is planned. Range: {aaa_range_hours} hours.""")
-        logging.info(f"""[AAA] Excludes: client cidr: {aaa_exclude_client_address},server cidr: {aaa_exclude_server_address}, oims.oper_ip_numbering_plan_history services subnets: {aaa_exclude_services_subnets_from_ip_numbering}.""")
+        logging.info(f"""[AAA] Excludes: client cidr: {aaa_exclude_client_address}, server cidr: {aaa_exclude_server_address}, oims.oper_ip_numbering_plan_history services subnets: {aaa_exclude_services_subnets_from_ip_numbering}.""")
     
     if logins_check == 'True':
         scenarios.append('check_logins')
