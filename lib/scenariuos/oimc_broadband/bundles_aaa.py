@@ -68,7 +68,7 @@ type_part = {
      'oimc.ftp_connections':        'ftpc'
      }
 
-def optional(type_,exclude_):
+def optional(type_,exclude_,telco_codes):
     result = ""
     if exclude_[0] != '[]' or exclude_[0] != '':result += f""" and not {type_}_client_address <<= any (array{exclude_[0]}::inet[])"""
     if exclude_[1] != '[]' or exclude_[1] != '':result += f""" and not {type_}_server_address <<= any (array{exclude_[1]}::inet[])"""
@@ -104,7 +104,9 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,excl
         __select = template_aaa.substitute(partition=part[0], 
                                            type_=type_part[part[1]], 
                                            telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','),
-                                           optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_,aaa_exclude_services_subnets_from_ip_numbering_]))
+                                           optional=optional(type_part[part[1]],
+                                                             [exclude_client_address_,exclude_server_address_,aaa_exclude_services_subnets_from_ip_numbering_],
+                                                             telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',',')))
         
         logging.debug(f"""SELECT: {__select}""")
         cur_.execute(__select)
