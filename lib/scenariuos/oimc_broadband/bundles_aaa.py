@@ -68,7 +68,7 @@ type_part = {
      'oimc.ftp_connections':        'ftpc'
      }
 
-def optional(type_,exclude_,telco_codes):
+def optional(type_,exclude_,telco_codes_):
     result = ""
     if exclude_[0] != '[]' or exclude_[0] != '':result += f""" and not {type_}_client_address <<= any (array{exclude_[0]}::inet[])"""
     if exclude_[1] != '[]' or exclude_[1] != '':result += f""" and not {type_}_server_address <<= any (array{exclude_[1]}::inet[])"""
