@@ -72,8 +72,8 @@ def optional(type_,exclude_):
     result = ""
     if exclude_[0] != '[]' or exclude_[0] != '':result += f""" and not {type_}_client_address <<= any (array{exclude_[0]}::inet[])"""
     if exclude_[1] != '[]' or exclude_[1] != '':result += f""" and not {type_}_server_address <<= any (array{exclude_[1]}::inet[])"""
-    if exclude_[2] == 'True':result+= f""" and not ${type_}_client_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}) and oinp_description ilike '%Служебные%')"""
-    if exclude_[2] == 'True':result+= f""" and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}) and oinp_description ilike '%Служебные%')"""
+    if exclude_[2] == 'True':result+= f""" and not ${type_}_client_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes_}) and oinp_description ilike '%Служебные%')"""
+    if exclude_[2] == 'True':result+= f""" and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes_}) and oinp_description ilike '%Служебные%')"""
     return result
 
 def info():
