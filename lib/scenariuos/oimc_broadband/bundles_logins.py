@@ -166,7 +166,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
         logging.info(text_for_log)
 
 
-    file = open(f"""{tmp_files_path_}/logins.{today.strftime("%y%m%d_%H%M%S")}.txt""",'a', encoding="utf-8")
+    file = open(f"""{tmp_files_path_}/logins_{result[0]}.{today.strftime("%y%m%d_%H%M%S")}.txt""",'a', encoding="utf-8")
     file.write(str(logins_for_file).replace('[(','').replace(')]','').replace('), (','\n') +  '\n')
     file.close
 
