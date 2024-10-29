@@ -157,11 +157,9 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
             if result[2] != 0:
                 __select = template_logins_list.substitute(type_=type_part[part[1]],partition=part[0],telco=result[0])
                 cur_.execute(__select)
-                __result = cur_.fetchall()
-                results = __result
+                __result = [item[0] for item in cur_.fetchall()]
+                logins_for_file = list(set(logins_for_file) | set(__result))
                 logging.debug(f"""RESULT: {__result}""")
-                if __result[0] not in logins_for_file:
-                    logins_for_file.append(__result[0])
 
         logging.info(text_for_log)
 
