@@ -18,7 +18,7 @@ join oims.subs_generic_history sgh
 on s.subs_id = sgh.sgnh_subs_id)
 then 1 else null end)
 from ${partition}
-where trmc_telco_code in (${telco_codes})
+where ${type_}_telco_code in (${telco_codes})
 group by ${type_}_telco_code
 order by ${type_}_telco_code
 """)
