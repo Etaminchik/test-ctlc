@@ -912,16 +912,22 @@ class Dictionary():
         #        status.append('[ ERR ]')
         return result, status
 
-    def doc_types(self):
+    def doc_types(self,operator_):
         self.cur.execute("select * from oims.document_types order by doct_id")
         result = self.cur.fetchall()
         status = list()
         for item in result:
-            if item[2] >= datetime(2000, 1, 1, 0, 0) \
-                and item[3] <= datetime(2037, 1, 1, 0, 0):
+            if item[2] >= operator_[3] and item[3] <= operator_[4]:
                 status.append('[ OK  ]')
             else:
                 status.append('[ ERR ]')
+
+            
+          #  if item[2] >= datetime(2000, 1, 1, 0, 0) \
+          #      and item[3] <= datetime(2037, 1, 1, 0, 0):
+          #      status.append('[ OK  ]')
+          #  else:
+          #      status.append('[ ERR ]')
         return result, status
 
     def ip_numbering_plan(self, operator_):
