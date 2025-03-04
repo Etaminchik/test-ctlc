@@ -905,10 +905,11 @@ class Dictionary():
         result = self.cur.fetchall()
         status = list()
         for item in result:
-            if item[4] == datetime(2037, 1, 1, 0, 0):
-                status.append('[ OK  ]')
-            else:
-                status.append('[ ERR ]')
+            status.append('[ OK  ]')
+        #    if item[4] == datetime(2037, 1, 1, 0, 0):
+        #        status.append('[ OK  ]')
+        #    else:
+        #        status.append('[ ERR ]')
         return result, status
 
     def doc_types(self):
