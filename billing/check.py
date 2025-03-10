@@ -203,7 +203,7 @@ def check_billing():
 
     _e.dictionary(operators[num], '\n')
     _e.dictionary(operators[num], "="*30 + ": Справочник типов документов :" + "="*30) 
-    d_doc_types = _dict.doc_types(operators[num])
+    d_doc_types = _dict.doc_types()
     _e.dictionary(operators[num], "{:<10}{:<3}{:<35}{:<20}{:<20}".format('Статус','Код','Название','Дата начала', 'Дата окончания'))
     for i in range(len(d_doc_types[0])):
       _e.dictionary(operators[num], "{:<10}{:<3}{:<35}{:<20}{:<20}".format(d_doc_types[1][i],
