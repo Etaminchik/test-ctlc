@@ -143,4 +143,4 @@ class AAAChecker:
 if SUBNETS:    
     AAAChecker().script()
 else:
-    print('Fill the SUBNETS array with the operator's subnets')
+    print("Fill the SUBNETS array with the operator's subnets")
