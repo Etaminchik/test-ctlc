@@ -20,7 +20,8 @@ class Selects():
         return self.cur.fetchall()
 
 class Abonents():
-    def __init__(self,cur_):
+    def __init__(self,con_, cur_):
+        self.conn = con_
         self.cur = cur_
         self.end_users = """
             (select subs_id
