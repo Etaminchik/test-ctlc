@@ -79,7 +79,7 @@ def check_billing():
     fn = _abon.fiz_number(operators[num][0])
     _e.psi(operators[num], "{:<40}{:<10}{:<10}{:<10}".format('Физ лиц без номера телефона (573):',len(fn[0]),len(fn[1]),len(fn[0])+len(fn[1])))
     fn_630 = _abon.fiz_number_630(operators[num][0])
-    _e.psi(operators[num], "{:<40}{:<10}{:<10}{:<10}".format('Физ лиц без номера телефона (630):',len(fn_630[0]),len(fn_630[1]),len(f_630n[0])+len(fn_630[1])))
+    _e.psi(operators[num], "{:<40}{:<10}{:<10}{:<10}".format('Физ лиц без номера телефона (630):',len(fn_630[0]),len(fn_630[1]),len(fn_630[0])+len(fn_630[1])))
 
     _e.psi(operators[num], "="*70)
 
