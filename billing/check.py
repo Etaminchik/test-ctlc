@@ -35,7 +35,7 @@ cur = con.cursor()
 
 _dict = Dictionary(cur)
 
-_abon = Abonents(cur)
+_abon = Abonents(con, cur)
 _e = Export()
 _ce = Critical_errors(cur)
 operators = _dict.operators()
