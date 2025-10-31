@@ -525,6 +525,40 @@ class Abonents():
         result.append(self.cur.fetchall())
         return result
 
+    def fiz_number_630(self,oper_id):#check
+        result = []
+        try:
+            self.cur.execute(f"""
+                select distinct s.subs_external_identifier  
+                from oims.subscribers s 
+                join oims.subs_person_history sph
+                on sph.sprh_subs_id = s.subs_id 
+                where s.subs_sbtp_id = 1
+                and sph.sprh_contact_phone is not null
+                and s.subs_id not in {self.end_users}
+                and s.subs_oper_id = {oper_id}
+                and s.subs_contract_close_date > now()
+            """)
+            result.append(self.cur.fetchall())
+        except DatabaseError as e:
+            result.append([])
+        try:
+            self.cur.execute(f"""
+                select distinct s.subs_external_identifier  
+                from oims.subscribers s 
+                join oims.subs_person_history sph
+                on sph.sprh_subs_id = s.subs_id 
+                where s.subs_sbtp_id = 1
+                and sph.sprh_contact_phone is not null
+                and s.subs_id not in {self.end_users}
+                and s.subs_oper_id = {oper_id}
+                and s.subs_contract_close_date < now()
+            """)
+            result.append(self.cur.fetchall())
+        except DatabaseError as e:
+            result.append([])
+        return result
+
     def ur_number(self,oper_id):#check
         result = []
         self.cur.execute(f"""
