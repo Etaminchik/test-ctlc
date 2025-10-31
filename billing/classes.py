@@ -1,5 +1,6 @@
 from datetime import timedelta,datetime
 import os
+from psycopg2 import DatabaseError, errors
 
 class Selects():
     def __init__(self,cur_,task_create_date_):
@@ -541,6 +542,7 @@ class Abonents():
             """)
             result.append(self.cur.fetchall())
         except DatabaseError as e:
+            self.conn.rollback()
             result.append([])
         try:
             self.cur.execute(f"""
@@ -556,6 +558,7 @@ class Abonents():
             """)
             result.append(self.cur.fetchall())
         except DatabaseError as e:
+            self.conn.rollback()
             result.append([])
         return result
 
