@@ -151,8 +151,10 @@ def check_billing():
     _e.list_of_id(operators[num],   fam[1],'[close] физ лица с масками в адресе регистрации')
     _e.list_of_id(operators[num],   fam[2], '[open] физ лица с масками в адресе установки оборудования')
     _e.list_of_id(operators[num],   fam[3],'[close] физ лица с масками в адресе установки оборудования')
-    _e.list_of_id(operators[num],   fn[0], '[open] физ лиц без номера телефона')
-    _e.list_of_id(operators[num],   fn[1],'[close] физ лиц без номера телефона')
+    _e.list_of_id(operators[num],   fn[0], '[open] физ лиц без номера телефона (573)')
+    _e.list_of_id(operators[num],   fn[1],'[close] физ лиц без номера телефона (573)')
+    _e.list_of_id(operators[num],   fn_630[0], '[open] физ лиц без номера телефона (630)')
+    _e.list_of_id(operators[num],   fn_630[1],'[close] физ лиц без номера телефона (630)')
 
 
     _e.list_of_id(operators[num],   ubo[0], '[open] Юр лица без оконечных',export_type)
