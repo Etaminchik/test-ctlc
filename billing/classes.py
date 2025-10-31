@@ -536,7 +536,7 @@ class Abonents():
                 join oims.subs_person_history sph
                 on sph.sprh_subs_id = s.subs_id 
                 where s.subs_sbtp_id = 1
-                and sph.sprh_contact_phone is not null
+                and sph.sprh_contact_phone is null
                 and s.subs_id not in {self.end_users}
                 and s.subs_oper_id = {oper_id}
                 and s.subs_contract_close_date > now()
@@ -552,7 +552,7 @@ class Abonents():
                 join oims.subs_person_history sph
                 on sph.sprh_subs_id = s.subs_id 
                 where s.subs_sbtp_id = 1
-                and sph.sprh_contact_phone is not null
+                and sph.sprh_contact_phone is null
                 and s.subs_id not in {self.end_users}
                 and s.subs_oper_id = {oper_id}
                 and s.subs_contract_close_date < now()
