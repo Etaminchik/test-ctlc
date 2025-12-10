@@ -419,7 +419,7 @@ def check_billing():
 
     #108
     if '[ ERR ]' in d_termination_causes[1]:
-      _e.psi(operators[num], "{:<7}{:<40}{:<10}{:<10}".format(' 109 ', 'Справочник причин завершения', len(d_termination_causes[0]), 'Есть ошибки'))
+      _e.psi(operators[num], "{:<7}{:<40}{:<10}{:<10}".format(' 108 ', 'Справочник причин завершения', len(d_termination_causes[0]), 'Есть ошибки'))
     elif '[ WRN ]' in d_termination_causes[1]:
        _e.psi(operators[num], "{:<7}{:<40}{:<10}{:<10}".format(' 109 ', 'Справочник причин завершения', len(d_termination_causes[0]), 'Код завершения неизвестен'))
     elif '[ ERR ]' not in d_termination_causes[1]:
