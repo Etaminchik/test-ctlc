@@ -95,7 +95,7 @@ class AAAChecker:
         return select
 
     def script(self):   
-        addresses = {}
+        addresses = Counter()
         text_for_file = "Checking the connection with logins\n\n=============================================\n"
         for name,type in types.items():
             with conn.cursor() as cur:
