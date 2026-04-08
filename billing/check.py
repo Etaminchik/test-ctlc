@@ -393,9 +393,9 @@ def check_billing():
 
     #104
     if '[ ERR ]' in d_gates[1]:
-      _e.psi(operators[num], "{:<7}{:<40}{:<10}{:<10}".format(' 104 ', 'шлюза', len(d_gates[0]), 'Есть ошибки'))
+      _e.psi(operators[num], "{:<7}{:<40}{:<10}{:<10}".format(' 104 ', 'шлюзы', len(d_gates[0]), 'Есть ошибки'))
     elif '[ ERR ]' not in d_gates[1]:
-      _e.psi(operators[num], "{:<7}{:<40}{:<10}{:<10}".format(' 104 ', 'Шлюза', len(d_gates[0]), 'Ошибок нет'))
+      _e.psi(operators[num], "{:<7}{:<40}{:<10}{:<10}".format(' 104 ', 'Шлюзы', len(d_gates[0]), 'Ошибок нет'))
 
     #105
     if '[ ERR ]' in d_call_types[1]:
