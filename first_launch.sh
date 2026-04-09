@@ -1,6 +1,6 @@
 echo '>>>>> Install python3 and pip3'
-yum install python3 -y
-yum install python3-pip -y
+yum install python3 -y --disablerepo='pgd*'
+yum install python3-pip -y --disablerepo='pgd*'
 
 echo '>>>>> Install numpy'
 pip3 install numpy
