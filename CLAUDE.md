@@ -13,7 +13,7 @@ The tool ships as an **RPM package for CentOS Stream 8** (see `packaging/test-ct
 - `test-ctlc.py` + `lib/` — the main tool.
 - `tools/` — standalone helper scripts (`aaachecker.py`, `make_addresses_from_cache.py`, `kpd4.sh`, `first_launch.sh`, `update.sh`), each run on its own and unrelated to the `test-ctlc.py` orchestration.
 - `packaging/test-ctlc.spec` — RPM spec.
-- `.github/workflows/` — CI: `build-rpm.yml` builds an RPM on every commit/PR; `release.yml` tags + releases on merge of a PR into `master`.
+- `.github/workflows/build-rpm.yml` — CI (AlmaLinux 8 container): builds the RPM on every push and on `workflow_dispatch`; on a `v*.*.*` tag push it also publishes a GitHub Release with the RPM. The short git commit is injected via `rpmbuild --define "git_commit <hash>"` and embedded in both the source archive name and the RPM `Release`, so the package filename is e.g. `test-ctlc-2.0.0-1.<commit>.el8.x86_64.rpm`.
 
 ### Installed (RPM) FHS layout, prefix `/opt/vasexperts`
 

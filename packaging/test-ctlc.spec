@@ -1,8 +1,8 @@
 # test-ctlc — VAS Experts OIMC/СОРМ binding-quality auditor
 #
-# Builds for CentOS Stream 8 (system python3.6). Python dependencies
-# (psycopg2, numpy) are shipped as a bundled virtualenv so the package is
-# self-contained and does not depend on EPEL / pip on the target host.
+# Builds on AlmaLinux 8 (RHEL 8 / CentOS 8 compatible, system python3.6).
+# Python dependencies (psycopg2, numpy) are shipped as a bundled virtualenv so
+# the package is self-contained and does not depend on EPEL / pip on the target.
 
 %global instroot   /opt/vasexperts
 %global appdir     %{instroot}/var/lib/test-ctlc
@@ -18,14 +18,19 @@
 %global debug_package %{nil}
 AutoReqProv: no
 
+# Short git commit, injected by CI via: rpmbuild --define "git_commit <hash>".
+# Falls back to "local" for manual builds. It is embedded into both the source
+# archive name and the RPM Release, so the commit appears in the package name.
+%{!?git_commit: %global git_commit local}
+
 Name:           test-ctlc
 Version:        2.0.0
-Release:        1%{?dist}
+Release:        1.%{git_commit}%{?dist}
 Summary:        VAS Experts OIMC/СОРМ traffic binding-quality auditor
 
 License:        Proprietary
 URL:            https://github.com/Etaminchik/test-ctlc
-Source0:        %{name}-%{version}.tar.gz
+Source0:        %{name}-%{version}-%{git_commit}.tar.gz
 
 BuildRequires:  python3 >= 3.6
 BuildRequires:  python3-devel
@@ -45,7 +50,7 @@ Installs under %{instroot}:
   var/log/test-ctlc              - logs
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}-%{git_commit}
 
 %build
 # Build the bundled virtualenv at its final runtime path so that every
