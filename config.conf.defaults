@@ -1,8 +1,8 @@
 [main]
 # [] = all, [1,2] = 1 and 2 telco_codes
-telco_codes = [] 
-log_path = log
-tmp_files_path = tmp
+telco_codes = []
+log_path = /opt/vasexperts/var/log/test-ctlc
+tmp_files_path = /opt/vasexperts/var/lib/test-ctlc/tmp
 log_level = info
 ingener_mode = True
 

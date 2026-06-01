@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Local runtime config (copied from config.conf.defaults)
+config.conf
+
+# Generated reports / dumps / logs
+reports/
+*.log
+test-ctlc.txt
+
+# RPM build trees
+rpmbuild/
+*.rpm
+artifacts/
+
+# Local agent / editor tooling
+.claude/
+.serena/
+.mcp.json
+.vscode/
+.idea/

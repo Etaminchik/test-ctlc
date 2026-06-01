@@ -1,15 +1,26 @@
 #!/usr/bin/env python3.6
 
 # -*- coding: utf-8 -*-
+import sys
+import os
+import argparse
+import configparser
+
+
+# When installed, the lib package lives under the FHS data dir while this
+# entry point is in /opt/vasexperts/bin. Make the lib package importable from
+# there. When run from a source checkout the repo root is already on sys.path,
+# so this insert is a harmless no-op (the dir simply may not exist).
+LIB_DIR = os.environ.get("TEST_CTLC_LIB", "/opt/vasexperts/var/lib/test-ctlc")
+if LIB_DIR not in sys.path:
+    sys.path.insert(0, LIB_DIR)
+
+DEFAULT_CONFIG = "/opt/vasexperts/etc/test-ctlc/config.conf"
+
 import lib.version as version
 import lib.processor as processor
 import lib.logger as logger
 from lib.logger import logging
-
-
-import sys
-import argparse
-import configparser
 
 
 
@@ -52,9 +63,12 @@ def main():
     elif args.command == 'run':
 
         try:
+            config_path = args.file[0] if isinstance(args.file, list) else args.file
+            if not config_path:
+                config_path = DEFAULT_CONFIG
             config = configparser.ConfigParser()
-            config.read(args.file)
-            logger.initialize(config['main']['log_path'], config['main']['log_level'])        
+            config.read(config_path)
+            logger.initialize(config['main']['log_path'], config['main']['log_level'])
             processor.run(config)
 
         except Exception as e:

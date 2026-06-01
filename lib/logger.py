@@ -38,8 +38,7 @@ level_name_to_level = {
 
 
 def initialize(log_path_, llnm_):
-    if not os.path.isdir(log_path_):
-        os.mkdir(log_path_)
+    os.makedirs(log_path_, exist_ok=True)
 
     log_file = log_path_ + '/test-ctlc.txt'
 

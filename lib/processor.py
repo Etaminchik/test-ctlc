@@ -16,9 +16,9 @@ from .scenariuos.oimc_broadband import bundles_logins
 def run(config_):
     telco_codes     = json.loads(config_['main']['telco_codes'])
     log_path        = config_['main']['log_path']
-    if not os.path.isdir(log_path):os.mkdir(log_path)
+    os.makedirs(log_path, exist_ok=True)
     tmp_files_path  = config_['main']['tmp_files_path']
-    if not os.path.isdir(tmp_files_path):os.mkdir(tmp_files_path)
+    os.makedirs(tmp_files_path, exist_ok=True)
 #    ingener_mode    = config_['main']['ingener_mode']
 
     db_host         = config_['database']['host']

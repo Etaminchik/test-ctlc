@@ -1,7 +1,7 @@
-#launch in the cron once every 3 hours 
-#0 */3 * * * /bin/python3 /opt/vasexperts/etc/test-ctlc/aaachecker.py > /dev/null 2>&1
+#launch in the cron once every 3 hours
+#0 */3 * * * /bin/python3 /opt/vasexperts/var/lib/test-ctlc/tools/aaachecker.py > /dev/null 2>&1
 
-REPORT_PATH = './'
+REPORT_PATH = '/opt/vasexperts/var/log/test-ctlc/'
 INTERVAL_IN_SEC = 60*60*3 #3 hours
 
 SUBNETS = [
