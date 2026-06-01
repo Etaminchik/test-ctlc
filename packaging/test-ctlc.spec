@@ -59,8 +59,8 @@ rm -rf %{venvdir}
 %install
 # psycopg2-binary bundles libpq with a relative RPATH (psycopg2_binary.libs)
 # that rpm's check-rpaths rejects (0x0002). Tell the QA check to allow it.
-# check-rpaths runs inside this same %install scriptlet, so exporting here is
-# enough. Mask = standard|invalid|insecure|$ORIGIN-order|empty|'..'.
+# check-rpaths runs inside this same install scriptlet, so exporting here is
+# enough. Mask = standard, invalid, insecure, origin-order, empty, dotdot.
 export QA_RPATHS=$(( 0x0001|0x0002|0x0004|0x0008|0x0010|0x0020 ))
 
 rm -rf %{buildroot}
