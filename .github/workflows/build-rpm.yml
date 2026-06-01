@@ -18,16 +18,21 @@ on:
 
 jobs:
   build-rpm:
-    name: Build RPM (AlmaLinux 8 / CentOS 8 compatible)
+    name: Build RPM (CentOS Stream 8 / EL8)
     runs-on: ubuntu-latest
+    # Pulled from quay.io: this runner cannot reach Docker Hub
+    # (registry-1.docker.io), but quay.io is reachable.
     container:
-      image: almalinux:8
+      image: quay.io/centos/centos:stream8
     permissions:
       contents: write
 
     steps:
-      - name: Install system dependencies
+      - name: Enable vault repos (CentOS Stream 8 is EOL) and install build deps
         run: |
+          sed -i -e 's|^mirrorlist=|#mirrorlist=|' \
+                 -e 's|^#\?baseurl=http://mirror.centos.org|baseurl=https://vault.centos.org|' \
+                 /etc/yum.repos.d/CentOS-*.repo
           dnf install -y git rpm-build rpmdevtools python3 python3-pip python3-devel gcc tar gzip
 
       - uses: actions/checkout@v4
