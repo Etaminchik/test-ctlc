@@ -27,12 +27,12 @@ template_logins_w_telco = Template("""
 select ${type_}_telco_code,
 count(*),
 count(case when 
-${type_}_subscriber_id not in 
-(select sgh.sgnh_identity 
-from oims.subscribers s 
-join oims.subs_generic_history sgh 
-on s.subs_id = sgh.sgnh_subs_id 
-where s.subs_oper_id in (${telco_codes}))
+${type_}_subscriber_id not in
+(select sgh.sgnh_identity
+from oims.subscribers s
+join oims.subs_generic_history sgh
+on s.subs_id = sgh.sgnh_subs_id
+where s.subs_oper_id in (${oper_ids}))
 then 1 else null end)
 from ${partition}
 where ${type_}_telco_code in (${telco_codes})
@@ -47,8 +47,8 @@ where ${type_}_subscriber_id not in
 (select sgh.sgnh_identity 
 from oims.subscribers s 
 join oims.subs_generic_history sgh 
-on s.subs_id = sgh.sgnh_subs_id  
-where s.subs_oper_id = ${telco})
+on s.subs_id = sgh.sgnh_subs_id
+where s.subs_oper_id = ${oper_id})
 and ${type_}_telco_code = ${telco}
 """)
 
@@ -111,6 +111,8 @@ def info():
     ...
 def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_history_,tmp_files_path_):
     telco_codes_ = np.array(telco_codes_)
+    oper_ids = np.array2string(telco_codes_[:,0]).replace('[','').replace(']','').replace(' ',',')
+    code2id  = {str(r[1]): str(r[0]) for r in telco_codes_}   # telco_code -> oper_id
     results_matrix = []
     if range_ % 24 == 0:
         date_l = (datetime.today() - timedelta(days=range_ // 24)).strftime("%Y-%m-%d 00:00:00")
@@ -137,9 +139,10 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
 
 
     for part in part_list:
-        __select = template_logins.substitute(partition=part[0], 
-                                           type_=type_part[part[1]], 
-                                           telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','))
+        __select = template_logins.substitute(partition=part[0],
+                                           type_=type_part[part[1]],
+                                           telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','),
+                                           oper_ids=oper_ids)
         
         logging.debug(f"""SELECT: {__select}""")
         cur_.execute(__select)
@@ -155,7 +158,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
             text_for_log += """{:<10} | """.format(f"""{result[0]}:{procent:.3f}""")
 
             if result[2] != 0:
-                __select = template_logins_list.substitute(type_=type_part[part[1]],partition=part[0],telco=result[0])
+                __select = template_logins_list.substitute(type_=type_part[part[1]],partition=part[0],telco=result[0],oper_id=code2id[str(result[0])])
                 cur_.execute(__select)
                 __result = [item[0] for item in cur_.fetchall()]
                 logins_for_file = list(set(logins_for_file) | set(__result))

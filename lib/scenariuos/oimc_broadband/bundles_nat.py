@@ -13,10 +13,10 @@ count(*),
 count(case when ${type_}_nat_address is null ${optional} then 1 else null end)
 from ${partition}
 where ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}))
+and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${oper_ids}))
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
 and ${type_}_telco_code in (${telco_codes})
-group by ${type_}_telco_code 
+group by ${type_}_telco_code
 order by ${type_}_telco_code""")
 
 
@@ -52,14 +52,14 @@ select * from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco})
 and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco}))
+and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${oper_id}))
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional};
 
 select ${type_}_client_address, count(1) from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco})
 and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
-and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco}))
+and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${oper_id}))
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional}
 group by ${type_}_client_address 
 order by count(1) desc;""")
@@ -118,6 +118,8 @@ def info():
     ...
 def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,exclude_client_address_,exclude_server_address_, threshold_,tmp_files_path_):
     telco_codes_ = np.array(telco_codes_)
+    oper_ids = np.array2string(telco_codes_[:,0]).replace('[','').replace(']','').replace(' ',',')
+    code2id  = {str(r[1]): str(r[0]) for r in telco_codes_}   # telco_code -> oper_id
     results_matrix = []
     if range_ % 24 == 0:
         date_l = (datetime.today() - timedelta(days=range_ // 24)).strftime("%Y-%m-%d 00:00:00")
@@ -144,9 +146,10 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,e
 
 
     for part in part_list:
-        __select = template_nat.substitute(partition=part[0], 
-                                           type_=type_part[part[1]], 
+        __select = template_nat.substitute(partition=part[0],
+                                           type_=type_part[part[1]],
                                            telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','),
+                                           oper_ids=oper_ids,
                                            optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
         
         logging.debug(f"""SELECT: {__select}""")
@@ -164,7 +167,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,e
             text_for_log += """{:<10} | """.format(f"""{result[0]}:{procent:.3f}""")
 
             if procent < threshold_[0]:
-                text_for_file = template_nat_analysis.substitute(type_=type_part[part[1]], partition=part[0], telco=result[0], optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
+                text_for_file = template_nat_analysis.substitute(type_=type_part[part[1]], partition=part[0], telco=result[0], oper_id=code2id[str(result[0])], optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
                 #logging.debug(f"""SELECT: {__select}""")
                 #cur_.execute(__select)
                 #__result = cur_.fetchall()

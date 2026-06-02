@@ -24,7 +24,7 @@ AutoReqProv: no
 %{!?git_commit: %global git_commit local}
 
 Name:           test-ctlc
-Version:        2.0.0
+Version:        2.1.0
 Release:        1.%{git_commit}%{?dist}
 Summary:        VAS Experts OIMC/СОРМ traffic binding-quality auditor
 
@@ -108,6 +108,12 @@ rm -rf %{buildroot}
 rm -rf %{venvdir}
 
 %changelog
+* Mon Jun 02 2026 VAS Experts <noreply@vasexperts.local> - 2.1.0-1
+- Fix operator linkage: subscriber/IP-numbering subqueries now join on
+  oims.operators.oper_id instead of oper_telco_code (NAT, AAA, logins).
+- Add per-scenario subnet scoping params (subnets_from_oper_ip_numbers_only,
+  subnets_only_from_the_list) for NAT, AAA and logins checks.
+
 * Mon Jun 01 2026 VAS Experts <noreply@vasexperts.local> - 2.0.0-1
 - Initial RPM packaging with FHS layout under /opt/vasexperts.
 - Bundled virtualenv (psycopg2, numpy); CLI installed as /opt/vasexperts/bin/test-ctlc.

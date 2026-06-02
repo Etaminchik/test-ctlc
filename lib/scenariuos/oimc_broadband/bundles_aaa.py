@@ -80,6 +80,7 @@ def info():
     ...
 def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,exclude_server_address_,threshold_,tmp_files_path_,aaa_exclude_services_subnets_from_ip_numbering_):
     telco_codes_ = np.array(telco_codes_)
+    oper_ids = np.array2string(telco_codes_[:,0]).replace('[','').replace(']','').replace(' ',',')
     results_matrix = []
     if range_ % 24 == 0:
         date_l = (datetime.today() - timedelta(days=range_ // 24)).strftime("%Y-%m-%d 00:00:00")
@@ -106,7 +107,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,excl
                                            telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','),
                                            optional=optional(type_part[part[1]],
                                                              [exclude_client_address_,exclude_server_address_,aaa_exclude_services_subnets_from_ip_numbering_],
-                                                             np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',',')))
+                                                             oper_ids))
         
         logging.debug(f"""SELECT: {__select}""")
         cur_.execute(__select)
@@ -127,7 +128,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_client_address_,excl
                                                            optional=optional(
                                                                 type_part[part[1]],
                                                                 [exclude_client_address_,exclude_server_address_,aaa_exclude_services_subnets_from_ip_numbering_],
-                                                                np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',',')))
+                                                                oper_ids))
                 logging.debug(f"""SELECT: {__select}""")
                 cur_.execute(__select)
                 __result = cur_.fetchall()
