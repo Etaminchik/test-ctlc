@@ -30,6 +30,13 @@ nat_exclude_server_address = []
 nat_exclude_dict_ip_numbering = True
 nat_threshold_for_analysis_as_percentage = 95
 nat_threshold_for_error_sampling_as_percentage = 1
+# Restrict the analysis to subscriber subnets only.
+# from_oper_ip_numbers_only: True = use subnets loaded in
+#   oims.oper_ip_numbering_plan_history for the configured operators.
+# only_from_the_list: explicit subnet list, e.g. ['1.1.1.0/24','2.2.0.0/16'].
+# When both are set the two subnet sets are UNIONed.
+nat_subnets_from_oper_ip_numbers_only = False
+nat_subnets_only_from_the_list = []
 
 
 
@@ -40,10 +47,16 @@ aaa_exclude_server_address = []
 aaa_exclude_services_subnets_from_ip_numbering = True
 aaa_threshold_for_analysis_as_percentage = 95
 aaa_threshold_for_error_sampling_as_percentage = 1
+# Restrict the analysis to subscriber subnets only (see [NAT] for details).
+aaa_subnets_from_oper_ip_numbers_only = False
+aaa_subnets_only_from_the_list = []
 
 
 
 [logins]
 logins_range_hours = 24
 logins_check_telco_in_generic_history = True
+# Restrict the analysis to subscriber subnets only (see [NAT] for details).
+logins_subnets_from_oper_ip_numbers_only = False
+logins_subnets_only_from_the_list = []
 

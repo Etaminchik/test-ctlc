@@ -37,6 +37,8 @@ def run(config_):
     nat_exclude_dict_ip_numbering                   = config_['NAT']['nat_exclude_dict_ip_numbering']
     nat_threshold_for_analysis_as_percentage        = int(config_['NAT']['nat_threshold_for_analysis_as_percentage'])
     nat_threshold_for_error_sampling_as_percentage  = int(config_['NAT']['nat_threshold_for_error_sampling_as_percentage'])
+    nat_subnets_from_oper_ip_numbers_only           = config_['NAT']['nat_subnets_from_oper_ip_numbers_only']
+    nat_subnets_only_from_the_list                  = ast.literal_eval(config_['NAT']['nat_subnets_only_from_the_list'])
 
     aaa_range_hours                                 = int(config_['AAA']['aaa_range_hours'])
     aaa_exclude_client_address                      = ast.literal_eval(config_['AAA']['aaa_exclude_client_address'])
@@ -44,9 +46,13 @@ def run(config_):
     aaa_threshold_for_analysis_as_percentage        = int(config_['AAA']['aaa_threshold_for_analysis_as_percentage'])
     aaa_threshold_for_error_sampling_as_percentage  = int(config_['AAA']['aaa_threshold_for_error_sampling_as_percentage'])
     aaa_exclude_services_subnets_from_ip_numbering  = config_['AAA']['aaa_exclude_services_subnets_from_ip_numbering']
-    
+    aaa_subnets_from_oper_ip_numbers_only           = config_['AAA']['aaa_subnets_from_oper_ip_numbers_only']
+    aaa_subnets_only_from_the_list                  = ast.literal_eval(config_['AAA']['aaa_subnets_only_from_the_list'])
+
     logins_range_hours = int(config_['logins']['logins_range_hours'])
     logins_check_telco_in_generic_history = config_['logins']['logins_check_telco_in_generic_history']
+    logins_subnets_from_oper_ip_numbers_only = config_['logins']['logins_subnets_from_oper_ip_numbers_only']
+    logins_subnets_only_from_the_list = ast.literal_eval(config_['logins']['logins_subnets_only_from_the_list'])
 
 
     
@@ -62,15 +68,21 @@ def run(config_):
         scenarios.append('check_nat')
         logging.info(f"""[NAT] A check of the NAT bundle is planned. Range: {nat_range_hours} hours.""")
         logging.info(f"""[NAT] Excludes: client cidr: {nat_exclude_client_address}, server cidr: {nat_exclude_server_address}, oims.oper_ip_numbering_plan_history from server cidr: {nat_exclude_dict_ip_numbering}.""")
+        if nat_subnets_from_oper_ip_numbers_only == 'True' or nat_subnets_only_from_the_list:
+            logging.info(f"""[NAT] Subnet scope: oper_ip_numbering_plan_history only: {nat_subnets_from_oper_ip_numbers_only}, list: {nat_subnets_only_from_the_list}.""")
 
     if aaa_check == 'True':
         scenarios.append('check_aaa')
         logging.info(f"""[AAA] A check of the AAA bundle is planned. Range: {aaa_range_hours} hours.""")
         logging.info(f"""[AAA] Excludes: client cidr: {aaa_exclude_client_address}, server cidr: {aaa_exclude_server_address}, oims.oper_ip_numbering_plan_history services subnets: {aaa_exclude_services_subnets_from_ip_numbering}.""")
-    
+        if aaa_subnets_from_oper_ip_numbers_only == 'True' or aaa_subnets_only_from_the_list:
+            logging.info(f"""[AAA] Subnet scope: oper_ip_numbering_plan_history only: {aaa_subnets_from_oper_ip_numbers_only}, list: {aaa_subnets_only_from_the_list}.""")
+
     if logins_check == 'True':
         scenarios.append('check_logins')
         logging.info(f"""[LGN] A check of the logins bundle is planned. Range: {logins_range_hours} hours.""")
+        if logins_subnets_from_oper_ip_numbers_only == 'True' or logins_subnets_only_from_the_list:
+            logging.info(f"""[LGN] Subnet scope: oper_ip_numbering_plan_history only: {logins_subnets_from_oper_ip_numbers_only}, list: {logins_subnets_only_from_the_list}.""")
 
     logging.info("{0} {1:08x} Finishing {0}".format("=" * 35, emulation_id))
     logging.info("Use to cut out log records: sed -n '/{0:08x} Starting/,/{0:08x} Finishing/p' {1}".format(emulation_id, log_path+'/test-ctlc.txt'))
@@ -119,7 +131,9 @@ def run(config_):
                         nat_exclude_client_address,
                         nat_exclude_server_address,
                         [nat_threshold_for_analysis_as_percentage,nat_threshold_for_error_sampling_as_percentage],
-                        tmp_files_path
+                        tmp_files_path,
+                        nat_subnets_from_oper_ip_numbers_only,
+                        nat_subnets_only_from_the_list
                         )
 
         logging.info("{0} {1:08x} Finishing {0}".format("=" * 35, emulation_id))
@@ -139,7 +153,9 @@ def run(config_):
                         aaa_exclude_server_address,
                         [aaa_threshold_for_analysis_as_percentage,aaa_threshold_for_error_sampling_as_percentage],
                         tmp_files_path,
-                        aaa_exclude_services_subnets_from_ip_numbering)
+                        aaa_exclude_services_subnets_from_ip_numbering,
+                        aaa_subnets_from_oper_ip_numbers_only,
+                        aaa_subnets_only_from_the_list)
 
         logging.info("{0} {1:08x} Finishing {0}".format("=" * 35, emulation_id))
         logging.info("Use to cut out log records: sed -n '/{0:08x} Starting/,/{0:08x} Finishing/p' {1}".format(emulation_id, log_path+'/test-ctlc.txt'))
@@ -155,7 +171,9 @@ def run(config_):
                         native_partitions,
                         logins_range_hours,
                         logins_check_telco_in_generic_history,
-                        tmp_files_path
+                        tmp_files_path,
+                        logins_subnets_from_oper_ip_numbers_only,
+                        logins_subnets_only_from_the_list
                         )
 
         logging.info("{0} {1:08x} Finishing {0}".format("=" * 35, emulation_id))

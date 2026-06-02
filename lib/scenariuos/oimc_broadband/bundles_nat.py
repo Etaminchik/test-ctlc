@@ -12,7 +12,7 @@ select ${type_}_telco_code,
 count(*),
 count(case when ${type_}_nat_address is null ${optional} then 1 else null end)
 from ${partition}
-where ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+where ${client_filter}
 and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${oper_ids}))
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
 and ${type_}_telco_code in (${telco_codes})
@@ -25,7 +25,7 @@ select ${type_}_telco_code,
 count(*),
 count(case when ${type_}_nat_address is null ${optional} then 1 else null end)
 from ${partition}
-where ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+where ${client_filter}
 and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${telco_codes}))
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
 and ${type_}_telco_code in (${telco_codes})
@@ -36,13 +36,13 @@ template_nat_analysis_wo_ipnum= Template("""
 select * from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco_codes})
-and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and ${client_filter}
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional};
 
 select ${type_}_client_address, count(1) from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco_codes})
-and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and ${client_filter}
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional}
 group by ${type_}_client_address 
 order by count(1) desc;""")
@@ -51,14 +51,14 @@ template_nat_analysis_w_ipnum= Template("""
 select * from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco})
-and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and ${client_filter}
 and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${oper_id}))
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional};
 
 select ${type_}_client_address, count(1) from ${partition}
 where ${type_}_nat_address is null
 and ${type_}_telco_code in (${telco})
-and ${type_}_client_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[])
+and ${client_filter}
 and not ${type_}_server_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in (${oper_id}))
 and not ${type_}_server_address <<= any (array['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']::inet[]) ${optional}
 group by ${type_}_client_address 
@@ -106,6 +106,20 @@ type_part = {
 
 
 
+def subnet_scope(type_,field_,from_oinp_,subnet_list_,oper_ids_):
+    # Subnet membership predicate for one address field (client/server).
+    # Returns "" when no scoping is configured, else a parenthesised OR of the
+    # active sources (oims.oper_ip_numbering_plan_history and/or an explicit list).
+    parts = []
+    if from_oinp_ == 'True':
+        parts.append(f"{type_}_{field_}_address <<= any(select oinp_subnet from oims.oper_ip_numbering_plan_history where oinp_oper_id in ({oper_ids_}))")
+    if subnet_list_:
+        parts.append(f"{type_}_{field_}_address <<= any (array{subnet_list_}::inet[])")
+    return "(" + " or ".join(parts) + ")" if parts else ""
+
+# Default NAT client filter: subscriber side must be RFC1918/CGNAT private.
+PRIVATE_RANGES = "['10.0.0.0/8','100.64.0.0/10','172.16.0.0/12','192.168.0.0/16']"
+
 def optional(type_,excludes_):
     result = ""
     if excludes_[0] != '[]' or excludes_[0] != '':result += f""" and not {type_}_client_address <<= any (array{excludes_[0]}::inet[])"""
@@ -116,10 +130,11 @@ def optional(type_,excludes_):
 
 def info():
     ...
-def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,exclude_client_address_,exclude_server_address_, threshold_,tmp_files_path_):
+def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,exclude_client_address_,exclude_server_address_, threshold_,tmp_files_path_,subnets_from_oper_ip_numbers_only_,subnets_only_from_the_list_):
     telco_codes_ = np.array(telco_codes_)
     oper_ids = np.array2string(telco_codes_[:,0]).replace('[','').replace(']','').replace(' ',',')
     code2id  = {str(r[1]): str(r[0]) for r in telco_codes_}   # telco_code -> oper_id
+    scope_active = subnets_from_oper_ip_numbers_only_ == 'True' or bool(subnets_only_from_the_list_)
     results_matrix = []
     if range_ % 24 == 0:
         date_l = (datetime.today() - timedelta(days=range_ // 24)).strftime("%Y-%m-%d 00:00:00")
@@ -146,11 +161,22 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,e
 
 
     for part in part_list:
+        type_p = type_part[part[1]]
+        # NAT subscriber-side filter: private ranges by default; when subnet
+        # scoping is active it replaces them with the operator/list subnets
+        # (matching either the client or server side).
+        if scope_active:
+            client_filter = "({0} or {1})".format(
+                subnet_scope(type_p,'client',subnets_from_oper_ip_numbers_only_,subnets_only_from_the_list_,oper_ids),
+                subnet_scope(type_p,'server',subnets_from_oper_ip_numbers_only_,subnets_only_from_the_list_,oper_ids))
+        else:
+            client_filter = f"{type_p}_client_address <<= any (array{PRIVATE_RANGES}::inet[])"
         __select = template_nat.substitute(partition=part[0],
-                                           type_=type_part[part[1]],
+                                           type_=type_p,
                                            telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','),
                                            oper_ids=oper_ids,
-                                           optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
+                                           client_filter=client_filter,
+                                           optional=optional(type_p,[exclude_client_address_,exclude_server_address_]))
         
         logging.debug(f"""SELECT: {__select}""")
         cur_.execute(__select)
@@ -167,7 +193,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,exclude_dict_ip_numbering_,e
             text_for_log += """{:<10} | """.format(f"""{result[0]}:{procent:.3f}""")
 
             if procent < threshold_[0]:
-                text_for_file = template_nat_analysis.substitute(type_=type_part[part[1]], partition=part[0], telco=result[0], oper_id=code2id[str(result[0])], optional=optional(type_part[part[1]],[exclude_client_address_,exclude_server_address_]))
+                text_for_file = template_nat_analysis.substitute(type_=type_p, partition=part[0], telco=result[0], oper_id=code2id[str(result[0])], client_filter=client_filter, optional=optional(type_p,[exclude_client_address_,exclude_server_address_]))
                 #logging.debug(f"""SELECT: {__select}""")
                 #cur_.execute(__select)
                 #__result = cur_.fetchall()
