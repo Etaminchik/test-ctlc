@@ -1,7 +1,7 @@
 # test-ctlc — VAS Experts OIMC/СОРМ binding-quality auditor
 #
 # Builds on AlmaLinux 8 (RHEL 8 / CentOS 8 compatible, system python3.6).
-# Python dependencies (psycopg2, numpy) are shipped as a bundled virtualenv so
+# Python dependencies (psycopg2) are shipped as a bundled virtualenv so
 # the package is self-contained and does not depend on EPEL / pip on the target.
 
 %global instroot   /opt/vasexperts
@@ -59,7 +59,7 @@ Installs under %{instroot}:
 rm -rf %{venvdir}
 %{__python3} -m venv %{venvdir}
 %{venvdir}/bin/pip install --upgrade pip wheel
-%{venvdir}/bin/pip install psycopg2-binary numpy
+%{venvdir}/bin/pip install psycopg2-binary
 
 %install
 # psycopg2-binary bundles libpq with a relative RPATH (psycopg2_binary.libs)
@@ -116,5 +116,5 @@ rm -rf %{venvdir}
 
 * Mon Jun 01 2026 VAS Experts <noreply@vasexperts.local> - 2.0.0-1
 - Initial RPM packaging with FHS layout under /opt/vasexperts.
-- Bundled virtualenv (psycopg2, numpy); CLI installed as /opt/vasexperts/bin/test-ctlc.
+- Bundled virtualenv (psycopg2); CLI installed as /opt/vasexperts/bin/test-ctlc.
 - Removed billing/ tooling; standalone helpers moved under tools/.

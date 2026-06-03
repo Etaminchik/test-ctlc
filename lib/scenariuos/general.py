@@ -1,5 +1,4 @@
 from ..logger import logging
-import numpy as np
 
 
 def info():
@@ -36,50 +35,55 @@ def checking_schema_version(cur_):
 
 
 
-def combining_bundles_reports(operators_,matrix_nat_,matrix_aaa_,matrix_logins_):
-    telco_codes = np.array(operators_)
-    matrix_nat_np       = np.array(matrix_nat_)
-    matrix_aaa_np       = np.array(matrix_aaa_)
-    matrix_logins_np    = np.array(matrix_logins_)
+def _filter_matrix(matrix, telco, type_p):
+    return [row for row in matrix if str(row[0]) == str(telco) and row[1] == type_p]
+
+
+def _mean_pct(rows):
+    vals = [float(row[2]) for row in rows]
+    return f"{sum(vals) / len(vals):.3f}"
+
+
+def _sum_count(rows):
+    return sum(int(row[5]) for row in rows)
+
+
+def combining_bundles_reports(operators_, matrix_nat_, matrix_aaa_, matrix_logins_):
     type_part = {
-         'rawf'     :'Передача данных (закрытые протоколы)',
-         'htrq'     :'Интернет-посещения HTTP',
-         'emlc'     :'Email-сообщения',
-         'imcn'     :'IM-сообщения',
-         'vipc'     :'VoIP-соединения',
-         'trmc'     :'Терминальный доступ',
-         'ftpc'     :'FTP-соединения'                           
-         }
+        'rawf': 'Передача данных (закрытые протоколы)',
+        'htrq': 'Интернет-посещения HTTP',
+        'emlc': 'Email-сообщения',
+        'imcn': 'IM-сообщения',
+        'vipc': 'VoIP-соединения',
+        'trmc': 'Терминальный доступ',
+        'ftpc': 'FTP-соединения',
+    }
 
-    for telco in telco_codes:
+    for telco in operators_:
         logging.info(f"""Statistics: {telco[2]}, telco: {telco[1]}""")
-        logging.info("{:<40} {:<10} {:<15} {:<10} {:<15} {:<10} {:<15}".format('Type','NAT', 'NAT count','AAA','AAA count','Logins','Logins count'))
-        nat=nat_count=aaa=aaa_count=logins=logins_count=0
+        logging.info("{:<40} {:<10} {:<15} {:<10} {:<15} {:<10} {:<15}".format('Type', 'NAT', 'NAT count', 'AAA', 'AAA count', 'Logins', 'Logins count'))
         for type_p in type_part:
-            if matrix_nat_np.size > 0:
-                data_nat    = matrix_nat_np[(matrix_nat_np[:,0] == str(telco[1])) & (matrix_nat_np[:,1] == type_p)]
+            nat = nat_count = aaa = aaa_count = logins = logins_count = 0
 
-                if data_nat.size > 0:
-                    nat = f"{np.mean(data_nat[:,2].astype(float), dtype=float):.3f}"
-                    nat_count = np.sum((data_nat[:,5]).astype(int))
-                else: nat=nat_count= 0
+            if matrix_nat_:
+                data_nat = _filter_matrix(matrix_nat_, telco[1], type_p)
+                if data_nat:
+                    nat = _mean_pct(data_nat)
+                    nat_count = _sum_count(data_nat)
 
-            if matrix_aaa_np.size > 0:
-                data_aaa    = matrix_aaa_np[(matrix_aaa_np[:,0] == str(telco[1])) & (matrix_aaa_np[:,1] == type_p)]
-                if data_aaa.size > 0:
-                    aaa = f"{np.mean(data_aaa[:,2].astype(float), dtype=float):.3f}"
-                    aaa_count = np.sum((data_aaa[:,5]).astype(int))
-                else: aaa=aaa_count= 0
+            if matrix_aaa_:
+                data_aaa = _filter_matrix(matrix_aaa_, telco[1], type_p)
+                if data_aaa:
+                    aaa = _mean_pct(data_aaa)
+                    aaa_count = _sum_count(data_aaa)
 
-            if matrix_logins_np.size > 0:
-                data_logins = matrix_logins_np[(matrix_logins_np[:,0] == str(telco[1])) & (matrix_logins_np[:,1] == type_p)]
-                if data_logins.size > 0:
-                    logins = f"{np.mean(data_logins[:,2].astype(float), dtype=float):.3f}"
-                    logins_count = np.sum((data_logins[:,5]).astype(int))
-                else: logins=logins_count= 0
+            if matrix_logins_:
+                data_logins = _filter_matrix(matrix_logins_, telco[1], type_p)
+                if data_logins:
+                    logins = _mean_pct(data_logins)
+                    logins_count = _sum_count(data_logins)
 
-
-            logging.info("{:<40} {:<10} {:<15} {:<10} {:<15} {:<10} {:<15}".format(type_part[type_p],nat,nat_count,aaa,aaa_count,logins,logins_count))
-        logging.info("="*80)
+            logging.info("{:<40} {:<10} {:<15} {:<10} {:<15} {:<10} {:<15}".format(type_part[type_p], nat, nat_count, aaa, aaa_count, logins, logins_count))
+        logging.info("=" * 80)
 
 
