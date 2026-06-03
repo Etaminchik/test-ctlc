@@ -3,8 +3,6 @@ optional = """and not htrq_client_address <<inet'0.0.0.0/0'"""
 from ...logger import logging
 from string import Template
 from datetime import datetime, timedelta
-import numpy as np
-
 today = datetime.today()
 
 template_logins_wo_telco = Template("""
@@ -121,8 +119,7 @@ def subnet_scope(type_,field_,from_oinp_,subnet_list_,oper_ids_):
 def info():
     ...
 def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_history_,tmp_files_path_,subnets_from_oper_ip_numbers_only_,subnets_only_from_the_list_):
-    telco_codes_ = np.array(telco_codes_)
-    oper_ids = np.array2string(telco_codes_[:,0]).replace('[','').replace(']','').replace(' ',',')
+    oper_ids = ','.join(str(r[0]) for r in telco_codes_)
     code2id  = {str(r[1]): str(r[0]) for r in telco_codes_}   # telco_code -> oper_id
     scope_active = subnets_from_oper_ip_numbers_only_ == 'True' or bool(subnets_only_from_the_list_)
     results_matrix = []
@@ -160,7 +157,7 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
             scope_clause = ""
         __select = template_logins.substitute(partition=part[0],
                                            type_=type_p,
-                                           telco_codes=np.array2string(telco_codes_[:,1]).replace('[','').replace(']','').replace(' ',','),
+                                           telco_codes=','.join(str(r[1]) for r in telco_codes_),
                                            oper_ids=oper_ids,
                                            scope=scope_clause)
 
@@ -197,22 +194,20 @@ def run(cur_,telco_codes_,native_partitions_,range_,check_telco_in_generic_histo
     file.close
 
 
-    results_matrix_np = np.array(results_matrix)
-    if len(results_matrix_np) == 0:
+    if not results_matrix:
         logging.error("[LGN] ДАННЫХ ЗА ПЕРИОД НЕТ")
         return []
-            
-    for telco in (np.unique(results_matrix_np[:,0])):
-        logging.info("="*30 +f": Logins statistics [telco:{telco}]:"+"="*30)
-         
 
-        for type_p in np.unique(results_matrix_np[results_matrix_np[:,0] == telco][:,1]):
-            data = results_matrix_np[(results_matrix_np[:,0] == telco) & (results_matrix_np[:,1] == type_p)]
-            logging.info("{:<35} {:<8} {} {} {}".format(list(filter(lambda x: type_part[x] == data[:,1][0], type_part))[0], 
-                                               f"{np.mean(np.asarray(data[:,2], dtype=float)):.3f}",
-                                                np.min(np.asarray(data[:,3],dtype=np.datetime64)),
-                                                np.max(np.asarray(data[:,4],dtype=np.datetime64)),
-                                                np.sum(np.asarray(data[:,5], dtype=float))))
+    for telco in sorted(set(row[0] for row in results_matrix)):
+        logging.info("=" * 30 + f": Logins statistics [telco:{telco}]:" + "=" * 30)
+        for type_p in sorted(set(row[1] for row in results_matrix if row[0] == telco)):
+            data = [row for row in results_matrix if row[0] == telco and row[1] == type_p]
+            table_name = next(k for k, v in type_part.items() if v == type_p)
+            mean_pct = sum(float(row[2]) for row in data) / len(data)
+            logging.info("{:<35} {:<8} {} {} {}".format(
+                table_name, f"{mean_pct:.3f}",
+                min(row[3] for row in data), max(row[4] for row in data),
+                sum(float(row[5]) for row in data)))
 
     return results_matrix
 
